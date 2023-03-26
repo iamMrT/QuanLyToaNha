@@ -56,11 +56,6 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-
-            <hr />
-            <hr />
-
-
             <Footer />
 
         </>

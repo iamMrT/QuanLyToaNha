@@ -1,15 +1,14 @@
 import axios from "axios";
 import { ERROR } from "../constants/base";
-import { DELETE, GET_ALL, GET_ONE, POST, UPDATE } from "../constants/company";
+import { DELETE, GET_ALL, POST, UPDATE, GET_ONE } from "../constants/operating_costs";
 
 
-export const getAllCompany = () => async dispatch => {
-
+export const getAllOperatingCosts = () => async dispatch => {
     try {
         const res = await axios({
             method: 'GET',
             baseURL: process.env.REACT_APP_URL_API,
-            url: 'company',
+            url: 'operatingCosts',
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token"),
                 "Content-Type": "application/json"
@@ -35,12 +34,12 @@ export const getAllCompany = () => async dispatch => {
     }
 }
 
-export const getCompanyById = (id) => async dispatch => {
+export const getOperatingCostsById = (id) => async dispatch => {
     try {
         const res = await axios({
             method: 'GET',
             baseURL: process.env.REACT_APP_URL_API,
-            url: `company/${id}`,
+            url: `operatingCosts/${id}`,
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token"),
                 "Content-Type": "application/json"
@@ -65,46 +64,12 @@ export const getCompanyById = (id) => async dispatch => {
         })
     }
 }
-
-
-export const createNewCompany = (data) => async dispatch => {
-    try {
-        const res = await axios({
-            method: 'POST',
-            baseURL: process.env.REACT_APP_URL_API,
-            url: `company`,
-            data: data,
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem("token"),
-                "Content-Type": "application/json"
-            }
-        })
-        if (res.status == 200) {
-            dispatch({
-                type: POST,
-                data: res.data
-            })
-        }
-        else {
-            dispatch({
-                type: ERROR,
-                data: null,
-            })
-        }
-    } catch (error) {
-        dispatch({
-            type: ERROR,
-            data: null,
-        })
-    }
-}
-
-export const updateCompany = (id, data) => async dispatch => {
+export const updateOperatingCosts = (id, data) => async dispatch => {
     try {
         const res = await axios({
             method: 'PUT',
             baseURL: process.env.REACT_APP_URL_API,
-            url: `company/${id}`,
+            url: `operatingCosts/${id}`,
             data: data,
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token"),
@@ -130,13 +95,43 @@ export const updateCompany = (id, data) => async dispatch => {
         })
     }
 }
-
-export const deleteCompany = (id) => async dispatch => {
+export const createNewOperatingCosts = (data) => async dispatch => {
+    try {
+        const res = await axios({
+            method: 'POST',
+            baseURL: process.env.REACT_APP_URL_API,
+            url: `operatingCosts`,
+            data: data,
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token"),
+                "Content-Type": "application/json"
+            }
+        })
+        if (res.status == 200) {
+            dispatch({
+                type: POST,
+                data: res.data
+            })
+        }
+        else {
+            dispatch({
+                type: ERROR,
+                data: null,
+            })
+        }
+    } catch (error) {
+        dispatch({
+            type: ERROR,
+            data: null,
+        })
+    }
+}
+export const deleteOperatingCosts = (id) => async dispatch => {
     try {
         const res = await axios({
             method: 'DELETE',
             baseURL: process.env.REACT_APP_URL_API,
-            url: `company/${id}`,
+            url: `operatingCosts/${id}`,
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token"),
                 "Content-Type": "application/json"

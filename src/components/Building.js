@@ -4,9 +4,124 @@ import '../css/building.css';
 import '../css/search_bar.css'
 import Footer from './Footer';
 import Header from './Header';
+import { useLocation } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllBuilding, createNewBuilding, updateBuilding, deleteBuilding } from '../redux/actions/building';
 import { Link } from 'react-router-dom';
 
 const Building = () => {
+    const token = localStorage.getItem('token');
+    const [isShow, setIsShow] = useState(false)
+    const data = useSelector(state => state.building.data)
+    const [buildings, setBuilding] = useState();
+    const [isAdd, setIsAdd] = useState(false);
+    const location = useLocation();
+    const [indexEditBuilding, setIndexEditBuilding] = useState(null);
+    const [nameSearch, setNameSearch] = useState("");
+
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getAllBuilding());
+        return () => {
+            console.log(location.pathname);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.pathname])
+
+    useEffect(() => {
+        setBuilding(data);
+    }, [data])
+
+    const editClick = (index) => {
+        setIsShow(true);
+        setIsAdd(false);
+        setIndexEditBuilding(index);
+        document.getElementById('name').value = buildings[index].name;
+        document.getElementById('floors').value = buildings[index].floors;
+        document.getElementById('location').value = buildings[index].location;
+        document.querySelector('.form-post').classList.add('active');
+    }
+
+    const popUpActive = (mode) => {
+        setIsShow(true);
+        setIsAdd(true);
+        document.querySelector('.form-post').classList.add('active');
+        if (mode === "edit") {
+            document.querySelector('.dialog__title').textContent = "Sửa thông tin tòa nhà";
+        }
+        else {
+            document.querySelector('.dialog__title').textContent = "Thêm mới tòa nhà";
+        }
+    }
+
+    const cancelClick = () => {
+        setIsShow(false);
+        setIsAdd(false);
+        document.querySelector('.form-post').classList.remove('active');
+    }
+
+    const addOrUpdateItem = () => {
+        if (isAdd) {
+            addItem();
+        }
+        else {
+            editBuilding();
+        }
+
+    }
+
+    const editBuilding = () => {
+        const name = document.getElementById('name').value;
+        const floors = document.getElementById('floors').value;
+        const location = document.getElementById('location').value;
+        const data = {
+            name: name,
+            floors: floors,
+            location: location,
+        }
+        dispatch(updateBuilding(buildings[indexEditBuilding].id, data));
+        let tmpBuildings = buildings;
+        tmpBuildings[indexEditBuilding].name = name;
+        tmpBuildings[indexEditBuilding].floors = floors;
+        tmpBuildings[indexEditBuilding].location = location;
+        setBuilding(tmpBuildings);
+        cancelClick();
+    }
+
+    const removeBuilding = (id) => {
+        if (id) {
+            dispatch(deleteBuilding(id));
+            const tmpBuildings = buildings.filter(com => com.id !== id);
+            setBuilding(tmpBuildings);
+        }
+    }
+
+    const addItem = () => {
+        const name = document.getElementById('name').value;
+        const floors = document.getElementById('floors').value;
+        const location = document.getElementById('location').value;
+        const data = {
+            name: name,
+            floors: floors,
+            location: location
+        }
+
+        dispatch(createNewBuilding(data));
+        window.location.reload();
+
+        cancelClick();
+    }
+
+    const searchBuilding = () => {
+        if (!nameSearch.trim().length) {
+            setBuilding(data);
+            return;
+        }
+        const tmpBuildings = buildings.filter(emp => emp.name.includes(nameSearch.trim()));
+        setBuilding(tmpBuildings);
+    }
+
+
     const linkAction = (id, status) => {
         const navLink = document.querySelectorAll('.nav__link');
         navLink.forEach(n => n.classList.remove('active'));
@@ -28,8 +143,8 @@ const Building = () => {
     return (
         <>
             <Header />
-            <div style={{}}>
-                {/* <div style={{ display: 'block' }} className="">
+            <div style={{ position: 'relative' }}>
+                <div style={{ display: isShow ? 'block' : 'none' }} className="modal">
                     <div className="modal_overlay"></div>
                     <div className="form-post">
                         <div className="form-post__title dialog__title">
@@ -48,17 +163,17 @@ const Building = () => {
                                 </div>
                             </div>
                             <div className="form-post__control">
-                                <button className="cancel-btn">
+                                <button onClick={() => cancelClick()} className="cancel-btn">
                                     Hủy
                                 </button>
-                                <button className="add-section-btn" >
+                                <button className="add-section-btn" onClick={() => addOrUpdateItem()}>
                                     <i className='bx bx-save'></i>
                                     Lưu
                                 </button>
                             </div>
                         </div>
                     </div>
-                </div> */}
+                </div>
                 <div style={{ maxWidth: "1100px", minHeight: "100vh" }} className="admin-post__container">
                     <div className="admin-post__wrapper">
                         <div className="admin-post__head">
@@ -66,13 +181,13 @@ const Building = () => {
                                 Danh sách tòa nhà
                             </div>
                             <form action="" class="search-bar">
-                                <input type="search" name="search" pattern=".*\S.*" required />
-                                <button class="search-btn" type="submit">
+                                <input type="search" name="search" pattern=".*\S.*" required onChange={(e) => setNameSearch(e.target.value)} />
+                                <button onClick={() => searchBuilding()} class="search-btn" type="submit">
                                     <span>Search</span>
                                 </button>
                             </form>
                             <div style={{ right: '10px' }} className="admin-post__button">
-                                <button >
+                                <button onClick={() => popUpActive()} >
                                     Thêm tòa nhà
                                 </button>
                             </div>
@@ -107,14 +222,43 @@ const Building = () => {
                                             </button>
                                         </td>
                                         <td>
-                                            <button className="post-delete-btn">
+                                            <button className="post-view-btn">
                                                 <i className='bx bx-trash'></i>
-                                                <Link className="nav__perfil" to='/company' onClick={() => linkAction(null, true)}>Xem
+                                                <Link className="btn-view" to='/company' onClick={() => linkAction(null, true)}>Xem
                                                 </Link>
                                             </button>
                                         </td>
                                     </tr>
 
+                                    {
+                                        buildings?.map((item, index) => (
+                                            <tr key={index}>
+                                                <td>{index + 1}</td>
+                                                <td>{item?.name}</td>
+                                                <td>{item?.floors}</td>
+                                                <td>{item?.location}</td>
+                                                <td>
+                                                    <button onClick={() => editClick(index)} className="post-edit-item-btn">
+                                                        <i className='bx bxs-pencil'></i>
+                                                        Sửa
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <button className="post-delete-btn" onClick={() => removeBuilding(item.id)}>
+                                                        <i className='bx bx-trash'></i>
+                                                        Xóa
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <button className="post-view-btn">
+                                                        <i className='bx bx-trash'></i>
+                                                        <Link className="btn-view" to='/company' onClick={() => linkAction(null, true)}>Xem
+                                                        </Link>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    }
                                 </tbody>
                             </table>
                         </div>
@@ -126,5 +270,6 @@ const Building = () => {
         </>
     )
 };
+
 
 export default Building;

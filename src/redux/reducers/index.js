@@ -1,4 +1,4 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 import buildingEmployeeReducers from './building_employee';
 import companyReducers from './company';
 import employeeReducers from './employee';
@@ -15,6 +15,10 @@ import monthlyStatisticsReducers from './monthly_statistics';
 import monthlyStatisticsDetailReducers from './monthly_statistics_details';
 import monthlySalaryReducers from './monthly_salary';
 import workReducers from './work';
+import buildingReducers from './building';
+import equipmentReducers from './equipment';
+import operatingCostsReducers from './operating_costs';
+
 const reducers = combineReducers({
     login: loginReducers,
     company: companyReducers,
@@ -32,6 +36,9 @@ const reducers = combineReducers({
     monthlyStatisticDetail: monthlyStatisticsDetailReducers,
     monthlySalary: monthlySalaryReducers,
     work: workReducers,
+    building: buildingReducers,
+    equipment: equipmentReducers,
+    operatingCosts: operatingCostsReducers
 });
 
 export default (state, action) => reducers(state, action);  

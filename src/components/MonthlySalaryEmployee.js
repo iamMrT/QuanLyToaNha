@@ -1,10 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import '../css/building.css'
-import '../css/form.css'
+// import '../css/form.css'
 import '../css/search_bar.css'
 import Footer from './Footer';
 import Header from './Header';
+
+import { getAllMonth } from '../redux/actions/month';
+import { getAllSalaryOfMonth } from '../redux/actions/monthly_salary';
+import { Redirect, useLocation } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+
 const MonthlySalaryEmployee = () => {
+    const monthlySalaries = useSelector(state => state.monthlySalary.data)
+    const location = useLocation();
+    const months = useSelector(state => state.months.data)
+    const [selectedMonth, setSelectedMonth] = useState(null)
+
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getAllMonth())
+        setTimeout(() => {
+            dispatch(getAllSalaryOfMonth(months[0]))
+        }, 300)
+    }, [location.pathname])
+
+    const onSelectChanged = (e) => {
+        const monthString = e.target.value
+        setSelectedMonth(monthString)
+        setTimeout(() => {
+            const monthInt = monthString.split(" ")[1]
+            console.log(monthInt)
+            const yearInt = monthString.split(" ")[3]
+            console.log(yearInt)
+            let selectedMonthItem = null
+            months.forEach(month => {
+                if (month.month == monthInt && month.year == yearInt) {
+                    selectedMonthItem = month;
+                }
+            })
+            console.log("check", selectedMonthItem)
+            dispatch(getAllSalaryOfMonth(selectedMonthItem))
+        }, 100)
+    }
+
+    const onThongKe = () => {
+
+
+    }
 
 
     return (
@@ -15,17 +57,21 @@ const MonthlySalaryEmployee = () => {
                     <div className="admin-post__wrapper">
                         <div className="admin-post__head">
                             <div style={{ fontSize: "20px", marginLeft: "-20px" }} className="admin-post__title">
-                                Thống kê lương tháng nhân viên theo
+                                Thống kê lương tháng nhân viên theo {selectedMonth}
                             </div>
 
                         </div>
                         <div className="input-search">
                             <div className="selectdiv">
                                 <label style={{ display: "block" }}>
-                                    <select>
-                                        <option value="day">Ngày</option>
+                                    <select value={selectedMonth} onChange={(e) => { onSelectChanged(e) }}>
+                                        {/* <option value="day">Ngày</option>
                                         <option value="month">Tháng </option>
-                                        <option value="year">Năm</option>
+                                        <option value="year">Năm</option> */}
+                                        {months.map((item, index) => (
+                                            <option key={index}>Tháng {item?.month} Năm {item?.year}</option>
+                                        ))
+                                        }
                                     </select>
                                 </label>
                             </div>
@@ -44,7 +90,7 @@ const MonthlySalaryEmployee = () => {
                                         <th style={{ width: '200px' }}>Bậc lương</th>
                                         <th style={{ width: '200px' }}>Lương tháng</th>
                                     </tr>
-                                    {/* {
+                                    {
                                         monthlySalaries?.map((item, index) => (
                                             <tr key={index}>
                                                 <td>{index + 1}</td>
@@ -62,7 +108,7 @@ const MonthlySalaryEmployee = () => {
 
                                             </tr>
                                         ))
-                                    } */}
+                                    }
 
                                 </tbody>
                             </table>

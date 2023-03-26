@@ -1,6 +1,7 @@
 import React from 'react'
 import Header from './Header'
 import Footer from './Footer'
+import imgPath from '../assets/img/1.png'
 const Intro = () => {
     return (
         <>
@@ -58,18 +59,18 @@ const Intro = () => {
 
 
                     <div className='row' style={{ marginTop: "36px" }}>
-                        <div className='row' style={{ marginTop: "36px", display: "flex", justifyContent: "center" }}>
+                        <div className='row' style={{ margin: "36px 0px", width: "100%", display: "flex", justifyContent: "center" }}>
                             <h2>DỰ ÁN ĐÃ TRIỂN KHAI</h2>
                         </div>
                         <div className="col-md-10 col-lg-10 col-sm-10 col-xs-12 r">
                             <div className="tb_work_txt_wrapper row">
-                                <div className="col-md-4 col-lg-4 col-sm-4 col-xs-6">
+                                <div className="col-md-6 col-lg-6 col-sm-6 col-xs-12">
                                     <div className="">
-                                        <img src="../img/1.png" alt="About"
-                                            className="" />
+                                        <img src={imgPath} alt=""
+                                            className="" style={{ backgroundSize: "cover" }} />
                                     </div>
                                 </div>
-                                <div className="col-md-8 col-lg-8 col-sm-8 col-xs-6">
+                                <div className="col-md-6 col-lg-6 col-sm-6 col-xs-12">
                                     <h4 style={{ fontSize: "20px" }}>Dự án Opal Boulevard
                                     </h4>
                                     <p style={{}}>Địa chỉ: Mặt tiền Đại Lộ Phạm Văn Đồng, Phường An Bình, Thị Xã Dĩ An, Bình Dương
